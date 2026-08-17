@@ -10,9 +10,10 @@ body{background:#fff;color:#000;overflow-x:hidden}
 .hidden{display:none!important}
 .screen{min-height:100vh;display:flex;flex-direction:column}
 button{border:0;cursor:pointer;background:none;font-size:15px}
-input{border:1px solid #ddd;border-radius:10px;padding:12px;font-size:16px;width:100%;margin:6px 0;outline:none;transition:.2s}
-input:focus{border-color:#0084ff}
+input,select{border:1px solid #ddd;border-radius:10px;padding:12px;font-size:16px;width:100%;margin:6px 0;outline:none;transition:.2s}
+input:focus,select:focus{border-color:#0084ff}
 .primary{width:100%;padding:14px;border-radius:10px;background:#0084ff;color:#fff;font-weight:700;margin-top:10px;font-size:16px}
+.secondary{width:100%;padding:14px;border-radius:10px;background:#f0f2f5;color:#0084ff;font-weight:700;margin-top:10px;font-size:16px}
 .err{color:#e53935;font-size:13px;margin-top:6px;min-height:18px;text-align:center}
 #smsToast{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:999;background:#1c1c2e;color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;max-width:90%;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.2)}
 #authPage{background:linear-gradient(135deg,#0084ff 0%,#7b2ff7 100%);align-items:center;justify-content:center;padding:20px}
@@ -24,7 +25,7 @@ input:focus{border-color:#0084ff}
 .tab.active{background:#fff;color:#0084ff;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:10}
 .brand{font-size:24px;font-weight:800;color:#0084ff}
-.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#00c6ff,#7b2ff7);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex-shrink:0}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#00c6ff,#7b2ff7);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex-shrink:0;background-size:cover;background-position:center}
 .avatar.small{width:38px;height:38px;font-size:15px}
 .searchbar{padding:10px 16px;background:#fff}
 .searchbar input{background:#f0f2f5;border:none;margin:0;border-radius:20px}
@@ -32,7 +33,8 @@ input:focus{border-color:#0084ff}
 .row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5f5;cursor:pointer;transition:.1s}
 .row:active{background:#f0f8ff}
 .row .info{flex:1;min-width:0}
-.nm{font-weight:600;font-size:16px;margin-bottom:2px}
+.nm{font-weight:600;font-size:16px;margin-bottom:2px;display:flex;align-items:center;gap:4px}
+.badge{color:#0084ff;font-size:14px}
 .sub{color:#888;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tm{color:#999;font-size:11px;flex-shrink:0}
 .bottom{display:flex;border-top:1px solid #eee;background:#fff;position:sticky;bottom:0}
@@ -66,6 +68,8 @@ input:focus{border-color:#0084ff}
 .controls{position:absolute;bottom:24px;width:100%;display:flex;justify-content:center;gap:14px}
 .controls button{width:56px;height:56px;border-radius:50%;background:#333;color:#fff;font-size:20px}
 .controls button.red{background:#e53935}
+.profile-setup{padding:20px}
+.profile-preview{width:100px;height:100px;border-radius:50%;background:#f0f2f5;margin:0 auto 16px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:36px;color:#888}
 </style>
 </head>
 <body>
@@ -108,6 +112,20 @@ input:focus{border-color:#0084ff}
       </div>
       <p id="regErr" class="err"></p>
     </div>
+  </div>
+</div>
+
+<!-- PROFILE SETUP SCREEN -->
+<div id="profileSetupPage" class="screen hidden">
+  <div class="auth-card" style="margin:auto">
+    <h2 style="text-align:center;margin-bottom:16px;color:#0084ff">প্রোফাইল সেটআপ</h2>
+    <div id="profilePreview" class="profile-preview">👤</div>
+    <input id="setupPhotoUrl" placeholder="Profile Picture URL (optional)" />
+    <input id="setupName" placeholder="Full Name" />
+    <input id="setupAddress" placeholder="Address / ঠিকানা" />
+    <input id="setupPhone" placeholder="Phone Number" inputmode="tel" />
+    <button id="saveSetupBtn" class="primary">Save Profile</button>
+    <p id="setupErr" class="err"></p>
   </div>
 </div>
 
@@ -156,6 +174,15 @@ input:focus{border-color:#0084ff}
     <div class="box"><div class="num" id="statUsers">0</div>Users</div>
     <div class="box"><div class="num" id="statChats">0</div>Chats</div>
   </div>
+  <div style="padding:0 16px 10px">
+    <h3 style="margin-bottom:8px;font-size:16px">Create User Manually (If OTP fails)</h3>
+    <input id="adminNewPhone" placeholder="User Phone" inputmode="tel" />
+    <input id="adminNewName" placeholder="User Name" />
+    <input id="adminNewUsername" placeholder="Username (unique)" />
+    <input id="adminNewPass" type="password" placeholder="Password" />
+    <button id="adminCreateUserBtn" class="secondary">Create User</button>
+    <p id="adminCreateErr" class="err"></p>
+  </div>
   <div id="adminUsers" class="list"></div>
   <div id="adminChats" class="list" style="border-top:4px solid #eee"></div>
 </div>
@@ -177,7 +204,7 @@ input:focus{border-color:#0084ff}
   <div class="controls">
     <button id="micBtn">🎤</button>
     <button id="camBtn"></button>
-    <button id="endBtn" class="red">📵</button>
+    <button id="endBtn" class="red"></button>
   </div>
 </div>
 
@@ -207,6 +234,7 @@ const show = id => $(id).classList.remove("hidden");
 const hide = id => $(id).classList.add("hidden");
 const initials = n => (n || "U").trim().charAt(0).toUpperCase();
 const chatIdFor = uid => [me.uid, uid].sort().join("_");
+const setBg = (el, url) => { el.style.backgroundImage = url ? `url(${url})` : ''; el.textContent = url ? '' : initials(el.dataset.name || 'U'); };
 
 // --- STATE ---
 let me = null, usersCache = {}, tempUser = null, pendingProfile = false;
@@ -216,60 +244,35 @@ let metaSubs = {}, myChats = {};
 let pc = null, localStream = null, callId = null, role = null;
 let remoteDescSet = false, pendingCandidates = [], currentIncoming = null;
 let callRef = null, candRef = null, incRef = null;
+let setupUid = null;
 
 // --- DEMO OTP SYSTEM ---
-function generateDemoOtp() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-function showToast(msg) {
-  $("smsText").textContent = msg;
-  show("smsToast");
-  setTimeout(() => hide("smsToast"), 4000);
-}
+function generateDemoOtp() { return Math.floor(100000 + Math.random() * 900000).toString(); }
+function showToast(msg) { $("smsText").textContent = msg; show("smsToast"); setTimeout(() => hide("smsToast"), 4000); }
 
 // --- AUTH TABS ---
-$("tabLogin").onclick = () => { 
-  $("tabLogin").classList.add("active"); 
-  $("tabReg").classList.remove("active"); 
-  show("loginBox"); hide("regBox"); 
-};
-$("tabReg").onclick = () => { 
-  $("tabReg").classList.add("active"); 
-  $("tabLogin").classList.remove("active"); 
-  hide("loginBox"); show("regBox"); 
-};
+$("tabLogin").onclick = () => { $("tabLogin").classList.add("active"); $("tabReg").classList.remove("active"); show("loginBox"); hide("regBox"); };
+$("tabReg").onclick = () => { $("tabReg").classList.add("active"); $("tabLogin").classList.remove("active"); hide("loginBox"); show("regBox"); };
 
 // --- REGISTRATION FLOW ---
 $("sendOtpBtn").onclick = () => {
   $("regErr").textContent = "";
   const phone = $("regPhone").value.trim();
-  if (!phone || phone.length < 11) { 
-    $("regErr").textContent = "সঠিক mobile number দিন"; 
-    return; 
-  }
+  if (!phone || phone.length < 11) { $("regErr").textContent = "সঠিক mobile number দিন"; return; }
   lastPhone = phone;
   demoOtp = generateDemoOtp();
-  
-  // Show demo SMS toast
   showToast(`📩 আপনার OTP: ${demoOtp}`);
-  
-  hide("regStep1"); 
-  show("regStep2");
+  hide("regStep1"); show("regStep2");
 };
 
 $("verifyOtpBtn").onclick = () => {
   const entered = $("otpInput").value.trim();
   if (entered === demoOtp) {
-    // Create anonymous user for registration flow
     auth.signInAnonymously().then(cred => {
       tempUser = cred.user;
       pendingProfile = true;
-      hide("regStep2"); 
-      show("regStep3");
-    }).catch(e => {
-      $("regErr").textContent = e.message;
-    });
+      hide("regStep2"); show("regStep3");
+    }).catch(e => { $("regErr").textContent = e.message; });
   } else {
     $("regErr").textContent = "ভুল OTP! আবার চেষ্টা করুন";
   }
@@ -280,47 +283,27 @@ $("saveProfileBtn").onclick = async () => {
   const uname = $("regUsername").value.trim().toLowerCase();
   const pass = $("regPass").value;
   
-  if (!name || !uname || pass.length < 6) { 
-    $("regErr").textContent = "সব ঘর ঠিকভাবে পূরণ করো (password ৬+ অক্ষর)"; 
-    return; 
-  }
-  if (!/^[a-z0-9_]+$/.test(uname)) { 
-    $("regErr").textContent = "username এ বাংলা/space চলবে না"; 
-    return; 
-  }
-  if (uname === "admin") {
-    $("regErr").textContent = "'admin' username reserved";
-    return;
-  }
+  if (!name || !uname || pass.length < 6) { $("regErr").textContent = "সব ঘর ঠিকভাবে পূরণ করো (password ৬+ অক্ষর)"; return; }
+  if (!/^[a-z0-9_]+$/.test(uname)) { $("regErr").textContent = "username এ বাংলা/space চলবে না"; return; }
+  if (uname === "admin") { $("regErr").textContent = "'admin' username reserved"; return; }
   
   try {
-    // Check if username exists
     const ex = await db.ref("usernameIndex/" + uname).get();
-    if (ex.exists()) { 
-      $("regErr").textContent = "এই username আগে থেকেই নেওয়া"; 
-      return; 
-    }
+    if (ex.exists()) { $("regErr").textContent = "এই username আগে থেকেই নেওয়া"; return; }
     
-    // Link email/password to anonymous account
     const cred = firebase.auth.EmailAuthProvider.credential(uname + "@" + APP_DOMAIN, pass);
     await tempUser.linkWithCredential(cred);
     
-    // Save profile
     await db.ref("users/" + tempUser.uid).set({ 
-      name, 
-      username: uname, 
-      phone: lastPhone, 
-      role: "user", 
-      createdAt: firebase.database.ServerValue.TIMESTAMP 
+      name, username: uname, phone: lastPhone, role: "user", verified: false,
+      photoUrl: "", address: "", createdAt: firebase.database.ServerValue.TIMESTAMP 
     });
     await db.ref("usernameIndex/" + uname).set(tempUser.uid);
     
     pendingProfile = false;
-    me = { uid: tempUser.uid, name, username: uname, phone: lastPhone, role: "user" };
-    enterMain();
-  } catch(e){ 
-    $("regErr").textContent = e.message; 
-  }
+    setupUid = tempUser.uid;
+    enterProfileSetup(name, lastPhone);
+  } catch(e){ $("regErr").textContent = e.message; }
 };
 
 // --- LOGIN FLOW ---
@@ -331,41 +314,28 @@ $("loginBtn").onclick = async () => {
   
   // Admin hardcoded login
   if (input === "admin" && pass === "admin123") {
-    // Check if admin user exists in DB, if not create it
     const adminSnap = await db.ref("users/admin_uid").get();
     if (!adminSnap.exists()) {
-      // Create admin user via anonymous + link
       const cred = await auth.signInAnonymously();
       const emailCred = firebase.auth.EmailAuthProvider.credential("admin@" + APP_DOMAIN, "admin123");
       await cred.user.linkWithCredential(emailCred);
       await db.ref("users/" + cred.user.uid).set({
-        name: "Admin",
-        username: "admin",
-        phone: "0000000000",
-        role: "admin",
-        createdAt: firebase.database.ServerValue.TIMESTAMP
+        name: "Admin", username: "admin", phone: "0000000000", role: "admin", verified: true,
+        photoUrl: "", address: "Dhaka, Bangladesh", createdAt: firebase.database.ServerValue.TIMESTAMP
       });
       await db.ref("usernameIndex/admin").set(cred.user.uid);
-      me = { uid: cred.user.uid, name: "Admin", username: "admin", phone: "0000000000", role: "admin" };
+      me = { uid: cred.user.uid, name: "Admin", username: "admin", phone: "0000000000", role: "admin", verified: true, photoUrl: "", address: "Dhaka, Bangladesh" };
       enterMain();
     } else {
-      // Admin exists, just sign in
-      try {
-        await auth.signInWithEmailAndPassword("admin@" + APP_DOMAIN, "admin123");
-      } catch(e) {
-        $("loginErr").textContent = "Admin login failed: " + e.message;
-      }
+      try { await auth.signInWithEmailAndPassword("admin@" + APP_DOMAIN, "admin123"); }
+      catch(e) { $("loginErr").textContent = "Admin login failed: " + e.message; }
     }
     return;
   }
   
   // Regular user login
-  try { 
-    await auth.signInWithEmailAndPassword(input + "@" + APP_DOMAIN, pass); 
-  }
-  catch(e){ 
-    $("loginErr").textContent = "ভুল username বা password"; 
-  }
+  try { await auth.signInWithEmailAndPassword(input + "@" + APP_DOMAIN, pass); }
+  catch(e){ $("loginErr").textContent = "ভুল username বা password"; }
 };
 
 // --- AUTH STATE LISTENER ---
@@ -376,39 +346,70 @@ auth.onAuthStateChanged(async u => {
   const s = await db.ref("users/" + u.uid).get();
   if (s.exists()) { 
     me = Object.assign({ uid: u.uid }, s.val()); 
-    enterMain(); 
-  } else { 
-    await auth.signOut(); 
-    alert("Profile পাওয়া যায়নি"); 
-  }
+    if (!me.address || !me.photoUrl) {
+      setupUid = u.uid;
+      enterProfileSetup(me.name, me.phone);
+    } else {
+      enterMain();
+    }
+  } else { await auth.signOut(); alert("Profile পাওয়া যায়নি"); }
 });
 
 function resetToAuth(){
-  me = null; pendingProfile = false; currentPeerUid = null;
+  me = null; pendingProfile = false; currentPeerUid = null; setupUid = null;
   if (msgRef) { msgRef.off(); msgRef = null; }
   if (usersRef) { usersRef.off(); usersRef = null; }
   if (myChatsRef) { myChatsRef.off(); myChatsRef = null; }
-  Object.values(metaSubs).forEach(r => r.off()); 
-  metaSubs = {}; myChats = {};
+  Object.values(metaSubs).forEach(r => r.off()); metaSubs = {}; myChats = {};
   cleanupCall();
   showScreen("authPage");
 }
-
 $("navLogout").onclick = () => auth.signOut();
 
-// --- SCREEN MANAGEMENT ---
-function showScreen(id){
-  ["authPage","mainPage","chatPage","adminPage"].forEach(s => hide(s));
-  show(id);
+// --- PROFILE SETUP ---
+function enterProfileSetup(name, phone) {
+  showScreen("profileSetupPage");
+  $("setupName").value = name || "";
+  $("setupPhone").value = phone || "";
+  $("setupAddress").value = "";
+  $("setupPhotoUrl").value = "";
+  updateProfilePreview();
 }
+
+$("setupPhotoUrl").oninput = updateProfilePreview;
+function updateProfilePreview() {
+  const url = $("setupPhotoUrl").value.trim();
+  const preview = $("profilePreview");
+  preview.dataset.name = $("setupName").value || "U";
+  setBg(preview, url);
+}
+
+$("saveSetupBtn").onclick = async () => {
+  const name = $("setupName").value.trim();
+  const address = $("setupAddress").value.trim();
+  const phone = $("setupPhone").value.trim();
+  const photoUrl = $("setupPhotoUrl").value.trim();
+  
+  if (!name) { $("setupErr").textContent = "নাম আবশ্যক"; return; }
+  
+  try {
+    await db.ref("users/" + setupUid).update({ name, address, phone, photoUrl });
+    me = Object.assign({}, me, { name, address, phone, photoUrl });
+    enterMain();
+  } catch(e) { $("setupErr").textContent = e.message; }
+};
+
+// --- SCREEN MANAGEMENT ---
+function showScreen(id){ ["authPage","profileSetupPage","mainPage","chatPage","adminPage"].forEach(s => hide(s)); show(id); }
 
 // --- MAIN SCREEN LOGIC ---
 function enterMain(){
   showScreen("mainPage");
-  $("myAvatar").textContent = initials(me.name);
+  const avatar = $("myAvatar");
+  avatar.dataset.name = me.name;
+  setBg(avatar, me.photoUrl);
   if (me.role === "admin") show("adminBtn"); else hide("adminBtn");
   
-  // Load users
   usersRef = db.ref("users");
   usersRef.on("value", snap => {
     usersCache = snap.val() || {};
@@ -416,17 +417,10 @@ function enterMain(){
     if (!$("adminPage").classList.contains("hidden")) renderAdmin();
   });
   
-  // Load my chats
   myChatsRef = db.ref("userChats/" + me.uid);
   myChatsRef.on("value", snap => {
     const ids = Object.keys(snap.val() || {});
-    // Cleanup old subs
-    Object.keys(metaSubs).forEach(cid => { 
-      if (!ids.includes(cid)) { 
-        metaSubs[cid].off(); delete metaSubs[cid]; delete myChats[cid]; 
-      } 
-    });
-    // Add new subs
+    Object.keys(metaSubs).forEach(cid => { if (!ids.includes(cid)) { metaSubs[cid].off(); delete metaSubs[cid]; delete myChats[cid]; } });
     ids.forEach(cid => {
       if (!metaSubs[cid]) {
         metaSubs[cid] = db.ref("chats/" + cid + "/meta");
@@ -441,15 +435,8 @@ function enterMain(){
 }
 
 function switchTab(t){
-  if (t === "chats") { 
-    $("navChats").classList.add("active"); 
-    $("navPeople").classList.remove("active"); 
-    show("listChats"); hide("listPeople"); 
-  } else { 
-    $("navPeople").classList.add("active"); 
-    $("navChats").classList.remove("active"); 
-    show("listPeople"); hide("listChats"); 
-  }
+  if (t === "chats") { $("navChats").classList.add("active"); $("navPeople").classList.remove("active"); show("listChats"); hide("listPeople"); }
+  else { $("navPeople").classList.add("active"); $("navChats").classList.remove("active"); show("listPeople"); hide("listChats"); }
 }
 $("navChats").onclick = () => switchTab("chats");
 $("navPeople").onclick = () => switchTab("people");
@@ -461,9 +448,8 @@ function renderPeople(){
     if (uid === me.uid) return;
     if (q && !(p.name||"").toLowerCase().includes(q) && !(p.username||"").toLowerCase().includes(q)) return;
     const row = document.createElement("div"); row.className = "row";
-    row.innerHTML = '<div class="avatar">' + initials(p.name) + '</div><div class="info"><div class="nm"></div><div class="sub"></div></div>';
-    row.querySelector(".nm").textContent = p.name;
-    row.querySelector(".sub").textContent = "@" + p.username;
+    const badgeHtml = p.verified ? '<span class="badge">✔️</span>' : '';
+    row.innerHTML = `<div class="avatar" data-name="${p.name}" style="background-image:${p.photoUrl ? 'url('+p.photoUrl+')' : ''}">${p.photoUrl ? '' : initials(p.name)}</div><div class="info"><div class="nm">${p.name}${badgeHtml}</div><div class="sub">@${p.username}</div></div>`;
     row.onclick = () => openChat(uid);
     box.appendChild(row);
   });
@@ -475,12 +461,10 @@ function renderChatList(){
   const entries = Object.entries(myChats).filter(([cid, m]) => m).sort((a,b) => (b[1].at||0)-(a[1].at||0));
   entries.forEach(([cid, m]) => {
     const peerUid = cid.split("_").find(x => x !== me.uid);
-    const p = usersCache[peerUid] || { name: "User", username: "?" };
+    const p = usersCache[peerUid] || { name: "User", username: "?", photoUrl: "" };
     const row = document.createElement("div"); row.className = "row";
-    row.innerHTML = '<div class="avatar">' + initials(p.name) + '</div><div class="info"><div class="nm"></div><div class="sub"></div></div><div class="tm"></div>';
-    row.querySelector(".nm").textContent = p.name;
-    row.querySelector(".sub").textContent = m.last || "";
-    row.querySelector(".tm").textContent = m.at ? new Date(m.at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}) : "";
+    const badgeHtml = p.verified ? '<span class="badge">✔️</span>' : '';
+    row.innerHTML = `<div class="avatar" data-name="${p.name}" style="background-image:${p.photoUrl ? 'url('+p.photoUrl+')' : ''}">${p.photoUrl ? '' : initials(p.name)}</div><div class="info"><div class="nm">${p.name}${badgeHtml}</div><div class="sub">${m.last || ""}</div></div><div class="tm">${m.at ? new Date(m.at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}) : ""}</div>`;
     row.onclick = () => openChat(peerUid);
     box.appendChild(row);
   });
@@ -489,9 +473,11 @@ function renderChatList(){
 // --- CHAT LOGIC ---
 function openChat(uid){
   currentPeerUid = uid;
-  const p = usersCache[uid] || { name: "User" };
+  const p = usersCache[uid] || { name: "User", photoUrl: "" };
   $("peerName").textContent = p.name;
-  $("peerAvatar").textContent = initials(p.name);
+  const peerAvatar = $("peerAvatar");
+  peerAvatar.dataset.name = p.name;
+  setBg(peerAvatar, p.photoUrl);
   showScreen("chatPage");
   if (msgRef) msgRef.off();
   $("chatBox").innerHTML = "";
@@ -532,15 +518,56 @@ function loadAdminChats(){
   adminChatsRef.on("child_removed", s => { adminChatIds = adminChatIds.filter(x => x !== s.key); renderAdmin(); });
 }
 
+$("adminCreateUserBtn").onclick = async () => {
+  $("adminCreateErr").textContent = "";
+  const phone = $("adminNewPhone").value.trim();
+  const name = $("adminNewName").value.trim();
+  const uname = $("adminNewUsername").value.trim().toLowerCase();
+  const pass = $("adminNewPass").value;
+  
+  if (!phone || !name || !uname || pass.length < 6) { $("adminCreateErr").textContent = "সব ঘর পূরণ করো"; return; }
+  if (!/^[a-z0-9_]+$/.test(uname)) { $("adminCreateErr").textContent = "username এ বাংলা/space চলবে না"; return; }
+  
+  try {
+    const ex = await db.ref("usernameIndex/" + uname).get();
+    if (ex.exists()) { $("adminCreateErr").textContent = "এই username আগে থেকেই নেওয়া"; return; }
+    
+    // Create via anonymous + link
+    const cred = await auth.signInAnonymously();
+    const emailCred = firebase.auth.EmailAuthProvider.credential(uname + "@" + APP_DOMAIN, pass);
+    await cred.user.linkWithCredential(emailCred);
+    
+    await db.ref("users/" + cred.user.uid).set({ 
+      name, username: uname, phone, role: "user", verified: false,
+      photoUrl: "", address: "", createdAt: firebase.database.ServerValue.TIMESTAMP 
+    });
+    await db.ref("usernameIndex/" + uname).set(cred.user.uid);
+    
+    // Sign out admin to keep session clean
+    await auth.signOut();
+    // Re-login as admin
+    await auth.signInWithEmailAndPassword("admin@" + APP_DOMAIN, "admin123");
+    
+    $("adminNewPhone").value = "";
+    $("adminNewName").value = "";
+    $("adminNewUsername").value = "";
+    $("adminNewPass").value = "";
+    alert("User created successfully!");
+  } catch(e) { $("adminCreateErr").textContent = e.message; }
+};
+
 function renderAdmin(){
   $("statUsers").textContent = Object.keys(usersCache).length;
   $("statChats").textContent = adminChatIds.length;
   const box = $("adminUsers"); box.innerHTML = "";
   Object.entries(usersCache).forEach(([uid, p]) => {
     const row = document.createElement("div"); row.className = "row";
-    row.innerHTML = '<div class="avatar">' + initials(p.name) + '</div><div class="info"><div class="nm"></div><div class="sub"></div></div><div><button class="abtn edit">Edit</button><button class="abtn red del">Del</button></div>';
-    row.querySelector(".nm").textContent = p.name + (p.role === "admin" ? " ️" : "");
-    row.querySelector(".sub").textContent = "@" + p.username + " • " + (p.phone || "");
+    const badgeHtml = p.verified ? '<span class="badge">✔️</span>' : '';
+    row.innerHTML = `<div class="avatar" data-name="${p.name}" style="background-image:${p.photoUrl ? 'url('+p.photoUrl+')' : ''}">${p.photoUrl ? '' : initials(p.name)}</div><div class="info"><div class="nm">${p.name}${badgeHtml}</div><div class="sub">@${p.username} • ${p.phone || ""}</div></div><div><button class="abtn verify">${p.verified ? 'Unverify' : 'Verify'}</button><button class="abtn edit">Edit</button><button class="abtn red del">Del</button></div>`;
+    row.querySelector(".verify").onclick = () => {
+      const newStatus = !p.verified;
+      db.ref("users/" + uid).update({ verified: newStatus });
+    };
     row.querySelector(".edit").onclick = () => {
       const nn = prompt("নতুন নাম:", p.name); if (nn === null) return;
       const nu = prompt("নতুন username:", p.username); if (nu === null) return;
@@ -586,15 +613,11 @@ function setupIncoming(){
     if (call && call.status === "ringing" && call.to === me.uid) {
       currentIncoming = Object.assign({ callId: cid }, call);
       const nm = (usersCache[call.from] || {}).name || "User";
-      $("incomingText").textContent = nm + " — " + (call.type === "video" ? "🎥 Video" : " Audio") + " call";
+      $("incomingText").textContent = nm + " — " + (call.type === "video" ? "🎥 Video" : "📞 Audio") + " call";
       show("incomingBox");
     } else db.ref("incoming/" + me.uid + "/" + cid).remove();
   });
-  incRef.on("child_removed", snap => { 
-    if (currentIncoming && currentIncoming.callId === snap.key) { 
-      currentIncoming = null; hide("incomingBox"); 
-    } 
-  });
+  incRef.on("child_removed", snap => { if (currentIncoming && currentIncoming.callId === snap.key) { currentIncoming = null; hide("incomingBox"); } });
 }
 
 async function getMedia(v){
@@ -629,10 +652,7 @@ function attachCallListeners(cid){
   });
 }
 
-function flushCandidates(){ 
-  pendingCandidates.forEach(c => pc && pc.addIceCandidate(c).catch(()=>{})); 
-  pendingCandidates = []; 
-}
+function flushCandidates(){ pendingCandidates.forEach(c => pc && pc.addIceCandidate(c).catch(()=>{})); pendingCandidates = []; }
 
 function openCallUI(type){
   show("callBox");
@@ -653,11 +673,7 @@ async function startCall(type){
     localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
-    await db.ref("calls/" + callId).set({ 
-      from: me.uid, to: currentPeerUid, type, status: "ringing", 
-      offer: { type: offer.type, sdp: offer.sdp }, 
-      at: firebase.database.ServerValue.TIMESTAMP 
-    });
+    await db.ref("calls/" + callId).set({ from: me.uid, to: currentPeerUid, type, status: "ringing", offer: { type: offer.type, sdp: offer.sdp }, at: firebase.database.ServerValue.TIMESTAMP });
     await db.ref("incoming/" + currentPeerUid + "/" + callId).set({ from: me.uid, type });
     openCallUI(type);
   } catch(e){ alert("Call শুরু হয়নি: " + e.message); cleanupCall(); }
@@ -666,11 +682,7 @@ async function startCall(type){
 async function answerCall(accept){
   if (!currentIncoming) return;
   const call = currentIncoming; currentIncoming = null; hide("incomingBox");
-  if (!accept) { 
-    db.ref("calls/" + call.callId).update({ status: "missed" }); 
-    db.ref("incoming/" + me.uid + "/" + call.callId).remove(); 
-    return; 
-  }
+  if (!accept) { db.ref("calls/" + call.callId).update({ status: "missed" }); db.ref("incoming/" + me.uid + "/" + call.callId).remove(); return; }
   try {
     callId = call.callId; role = "callee";
     remoteDescSet = false; pendingCandidates = [];
@@ -682,22 +694,14 @@ async function answerCall(accept){
     remoteDescSet = true; flushCandidates();
     const ans = await pc.createAnswer();
     await pc.setLocalDescription(ans);
-    await db.ref("calls/" + callId).update({ 
-      status: "accepted", answer: { type: ans.type, sdp: ans.sdp } 
-    });
+    await db.ref("calls/" + callId).update({ status: "accepted", answer: { type: ans.type, sdp: ans.sdp } });
     db.ref("incoming/" + me.uid + "/" + callId).remove();
     openCallUI(call.type);
-  } catch(e){ 
-    db.ref("calls/" + call.callId).update({ status: "failed" }); 
-    cleanupCall(); 
-  }
+  } catch(e){ db.ref("calls/" + call.callId).update({ status: "failed" }); cleanupCall(); }
 }
 
 async function endCall(w){
-  if (w && callId) { 
-    db.ref("calls/" + callId).update({ status: "ended" }); 
-    db.ref("incoming/" + currentPeerUid + "/" + callId).remove(); 
-  }
+  if (w && callId) { db.ref("calls/" + callId).update({ status: "ended" }); db.ref("incoming/" + currentPeerUid + "/" + callId).remove(); }
   cleanupCall();
 }
 
@@ -718,16 +722,8 @@ $("callVideoBtn").onclick = () => startCall("video");
 $("acceptBtn").onclick = () => answerCall(true);
 $("declineBtn").onclick = () => answerCall(false);
 $("endBtn").onclick = () => endCall(true);
-$("micBtn").onclick = () => { 
-  if (!localStream) return; 
-  const t = localStream.getAudioTracks()[0]; 
-  if (t) { t.enabled = !t.enabled; $("micBtn").textContent = t.enabled ? "🎤" : "🔇"; } 
-};
-$("camBtn").onclick = () => { 
-  if (!localStream) return; 
-  const t = localStream.getVideoTracks()[0]; 
-  if (t) { t.enabled = !t.enabled; $("camBtn").textContent = t.enabled ? "📷" : "🚫"; } 
-};
+$("micBtn").onclick = () => { if (!localStream) return; const t = localStream.getAudioTracks()[0]; if (t) { t.enabled = !t.enabled; $("micBtn").textContent = t.enabled ? "" : "🔇"; } };
+$("camBtn").onclick = () => { if (!localStream) return; const t = localStream.getVideoTracks()[0]; if (t) { t.enabled = !t.enabled; $("camBtn").textContent = t.enabled ? "📷" : "🚫"; } };
 </script>
 </body>
 </html>
